@@ -1,0 +1,9 @@
+
+instance_type: t2.micro
+image:  ami-0a74bfeb190bd404f
+zone: ap-south-1b
+region: ap-south-1
+keypair: linux7.5
+count: 1
+security_group: ansible_security
+vpc: vpc-7ef0c116

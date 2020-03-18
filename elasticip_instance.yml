@@ -1,0 +1,16 @@
+---
+ - hosts: localhost
+   vars_files:
+      - /home/ayush/playbooks/aws_templates/vars.yml
+   tasks:
+     - name: allocate a new elastic IP without associating it to anything
+       ec2_eip:
+         state: present
+         region: "{{ region }}"
+       register: eip
+     - name: associate an elastic IP with an instance
+       ec2_eip:
+        device_id: "{{ instanceid }}"
+        ip: "{{ eip.public_ip }}"
+        region: "{{ region }}"
+

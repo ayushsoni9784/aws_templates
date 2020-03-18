@@ -1,0 +1,16 @@
+---
+ - hosts: localhost
+   vars_files:
+      - /home/ayush/playbooks/vol/vars.yml
+
+   tasks:
+    - name: creating an ec2 instance
+      ec2:
+        keypair: "{{ keypair }}"
+        image: "{{ image }}"
+        instance_type: t2.micro
+        region: "{{ region }}"
+        zone: "{{ zone }}"
+        wait: yes
+        count: 1
+

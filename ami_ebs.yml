@@ -1,0 +1,42 @@
+---
+ - hosts: localhost
+   vars_files:
+      - /home/ayush/playbooks/aws_templates/vars.yml
+
+   
+   tasks: 
+    - name: Creating an ec2 instance
+      ec2:
+        keypair: "{{ keypair }}"
+        image: "{{ image }}"
+        instance_type: "{{ instance_type }}"
+        region: "{{ region }}"
+        zone: "{{ zone }}"
+        wait: yes
+        count: 1
+      register: ec2
+
+    - name: Creating a snapshot of root volume of instance
+      ec2_snapshot:
+          instance_id: "{{ item.id }}"
+          device_name: "{{ item.root_device_name }}"
+          description: snapshot of root device of insatnce id "{{ item.id }}"
+          region: "{{ item.region }}"
+      loop: "{{ ec2.instances }}"
+      register: ec2_snapshot
+      
+    - name: creating an ami from the EBS snapshot
+      ec2_ami:
+           name: newtest
+           state: present
+           architecture: x86_64
+           virtualization_type: hvm
+           root_device_name: /dev/xvda
+           device_mapping:
+                 - device_name: /dev/xvda
+                   volume_size: 10
+                   snapshot_id: "{{ item.snapshot_id }}"
+                   delete_on_termination: true
+                   volume_type: gp2
+      loop: "{{ ec2_snapshot.results }}"            
+

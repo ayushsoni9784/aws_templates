@@ -1,0 +1,21 @@
+---
+ - hosts: localhost
+   vars_files:
+      - /home/ayush/playbooks/aws_templates/vars.yml
+
+   tasks:
+    - name: Creating a Security Group 
+      ec2_group:
+        name: aws_ansible
+        description: any description
+        vpc_id: "{{ vpc }}"
+        region: "{{ region }}"
+        rules:
+         - proto: tcp
+           from_port: 22
+           to_port: 22
+           cidr_ip: 0.0.0.0/0
+         - proto: tcp
+           from_port: 80
+           to_port: 80
+           cidr_ip: 0.0.0.0/0

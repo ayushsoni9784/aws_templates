@@ -1,0 +1,18 @@
+---
+ - hosts: localhost
+   vars_files:
+    - /home/ayush/playbooks/vol/vars1.yml
+
+   tasks:
+    - ec2_key:
+         name: aws
+         region: ap-south-1
+      register: ec2_key
+
+    - name: saving the key
+      copy:
+        content: "{{ ec2_key.key.private_key }}"
+        dest: /home/ayush/Downloads/aws.pem
+        mode: 0600
+      when: ec2_key.changed
+

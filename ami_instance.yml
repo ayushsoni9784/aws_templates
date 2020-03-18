@@ -1,0 +1,27 @@
+---
+ - hosts: localhost
+   vars_files:
+      - /home/ayush/playbooks/aws_templates/vars.yml
+
+   tasks:
+    - name: Creating an ec2 instance
+      ec2:
+        keypair: "{{ keypair }}"
+        image: "{{ image }}"
+        instance_type: "{{ instance_type }}"
+        region: "{{ region }}"
+        zone: "{{ zone }}"
+        wait: yes
+        count: 1
+      register: ec2
+    - name: Creating an ami from instance
+      ec2_ami:
+         instance_id: "{{ item.id }}"
+         name: newtest
+         description: created using ansible 
+         device_mapping:
+             - device_name: /dev/sda1
+               size: 10
+               delete_on_termination: true
+               volume_type: gp2
+      loop: "{{ ec2.instances }}" 

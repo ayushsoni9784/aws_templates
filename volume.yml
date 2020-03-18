@@ -1,0 +1,24 @@
+---
+ - hosts: localhost
+   vars_files:
+      - /home/ayush/playbooks/vol/vars.yml
+
+   tasks:
+    - ec2:
+        keypair: "{{ keypair }}"
+        image: "{{ image }}"
+        instance_type: t2.micro
+        region: "{{ region }}"
+        zone: "{{ zone }}"
+        wait: yes
+        count: 1
+      register: ec2
+    - ec2_vol:
+       instance: "{{ item.id }}"
+       name: mg
+       device_name: /dev/xvdf
+       region: '{{ region }}'
+       volume_size: 5
+       zone: "{{ zone }}"
+      loop: "{{ ec2.instances }}"
+
